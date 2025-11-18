@@ -18,14 +18,7 @@ Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-playbill = "0.1.0"
-```
-
-Or install from a local path:
-
-```toml
-[dependencies]
-playbill = { path = "../playbill" }
+playbill = "0.1.3"
 ```
 
 ## Usage

@@ -9,11 +9,11 @@ permissions:
   contents: write
 
 env:
-  BUILD_BINARIES: false
+  BUILD_BINARIES: 'false'
 
 jobs:
   build:
-    if: env.BUILD_BINARIES == 'true'
+    if: vars.BUILD_BINARIES == 'true' || github.event.head_commit.message == '[build-binaries]'
     name: Build ${{ matrix.target }}
     runs-on: ${{ matrix.os }}
     strategy:
@@ -162,7 +162,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Download all artifacts
-        if: env.BUILD_BINARIES == 'true'
+        if: vars.BUILD_BINARIES == 'true'
         uses: actions/download-artifact@v4
         with:
           path: artifacts
@@ -193,7 +193,7 @@ jobs:
             --generate-notes
           
           # Upload all packaged binaries if BUILD_BINARIES is true
-          if [ "${{ env.BUILD_BINARIES }}" = "true" ]; then
+          if [ "${{ vars.BUILD_BINARIES }}" = "true" ]; then
             for dir in artifacts/*-packaged/; do
               if [ -d "$dir" ]; then
                 for file in "$dir"*.tar.gz "$dir"*.zip; do
