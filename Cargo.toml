@@ -1,6 +1,6 @@
 [package]
 name = "playbill"
-version = "0.1.2"
+version = "0.1.3"
 edition = "2021"
 description = "ASCII art title generator with random gradient effects"
 license = "MIT OR Apache-2.0"
