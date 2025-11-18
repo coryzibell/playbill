@@ -8,8 +8,12 @@ on:
 permissions:
   contents: write
 
+env:
+  BUILD_BINARIES: false
+
 jobs:
   build:
+    if: env.BUILD_BINARIES == 'true'
     name: Build ${{ matrix.target }}
     runs-on: ${{ matrix.os }}
     strategy:
@@ -152,11 +156,13 @@ jobs:
   release:
     name: Create Release
     needs: build
+    if: always()
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
       - name: Download all artifacts
+        if: env.BUILD_BINARIES == 'true'
         uses: actions/download-artifact@v4
         with:
           path: artifacts
@@ -186,13 +192,15 @@ jobs:
             --title "Release $VERSION" \
             --generate-notes
           
-          # Upload all packaged binaries
-          for dir in artifacts/*-packaged/; do
-            if [ -d "$dir" ]; then
-              for file in "$dir"*.tar.gz "$dir"*.zip; do
-                if [ -f "$file" ]; then
-                  gh release upload "$VERSION" "$file"
-                fi
-              done
-            fi
-          done
+          # Upload all packaged binaries if BUILD_BINARIES is true
+          if [ "${{ env.BUILD_BINARIES }}" = "true" ]; then
+            for dir in artifacts/*-packaged/; do
+              if [ -d "$dir" ]; then
+                for file in "$dir"*.tar.gz "$dir"*.zip; do
+                  if [ -f "$file" ]; then
+                    gh release upload "$VERSION" "$file"
+                  fi
+                done
+              fi
+            done
+          fi
