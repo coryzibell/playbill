@@ -1,0 +1,17 @@
+[package]
+name = "playbill"
+version = "0.1.0"
+edition = "2021"
+description = "ASCII art title generator with random gradient effects"
+license = "MIT OR Apache-2.0"
+
+[dependencies]
+figlet-rs = "0.1.5"
+colored = "2.1"
+colorgrad = { version = "0.8.0", features = ["preset"] }
+rand = "0.9.2"
+zstd = "0.13"
+anyhow = "1.0.99"
+
+[build-dependencies]
+zstd = "0.13"
