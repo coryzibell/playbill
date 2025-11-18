@@ -17,35 +17,42 @@ jobs:
         include:
           - os: ubuntu-latest
             target: x86_64-unknown-linux-gnu
-            artifact_name: speedo
-            asset_name: speedo-linux-x86_64
+            ext: ""
+            asset_suffix: linux-x86_64
           - os: ubuntu-latest
             target: aarch64-unknown-linux-gnu
-            artifact_name: speedo
-            asset_name: speedo-linux-aarch64
+            ext: ""
+            asset_suffix: linux-aarch64
           - os: ubuntu-latest
             target: x86_64-unknown-freebsd
-            artifact_name: speedo
-            asset_name: speedo-freebsd-x86_64
+            ext: ""
+            asset_suffix: freebsd-x86_64
           - os: windows-latest
             target: x86_64-pc-windows-msvc
-            artifact_name: speedo.exe
-            asset_name: speedo-windows-x86_64.exe
+            ext: ".exe"
+            asset_suffix: windows-x86_64.exe
           - os: windows-latest
             target: aarch64-pc-windows-msvc
-            artifact_name: speedo.exe
-            asset_name: speedo-windows-aarch64.exe
+            ext: ".exe"
+            asset_suffix: windows-aarch64.exe
           - os: macos-latest
             target: x86_64-apple-darwin
-            artifact_name: speedo
-            asset_name: speedo-macos-x86_64
+            ext: ""
+            asset_suffix: macos-x86_64
           - os: macos-latest
             target: aarch64-apple-darwin
-            artifact_name: speedo
-            asset_name: speedo-macos-aarch64
+            ext: ""
+            asset_suffix: macos-aarch64
 
     steps:
       - uses: actions/checkout@v4
+      
+      - name: Set artifact names
+        shell: bash
+        run: |
+          REPO_NAME="${{ github.event.repository.name }}"
+          echo "ARTIFACT_NAME=${REPO_NAME}${{ matrix.ext }}" >> $GITHUB_ENV
+          echo "ASSET_NAME=${REPO_NAME}-${{ matrix.asset_suffix }}" >> $GITHUB_ENV
 
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
@@ -87,60 +94,60 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.asset_name }}
-          path: target/${{ matrix.target }}/release/${{ matrix.artifact_name }}
+          name: ${{ env.ASSET_NAME }}
+          path: target/${{ matrix.target }}/release/${{ env.ARTIFACT_NAME }}
 
       - name: Package binary (Linux/FreeBSD)
         if: contains(matrix.target, 'linux') || contains(matrix.target, 'freebsd')
         run: |
           cd target/${{ matrix.target }}/release
-          tar -czf ${{ matrix.asset_name }}.tar.gz ${{ matrix.artifact_name }}
-          tar -czf speedo-${{ matrix.target }}.tar.gz ${{ matrix.artifact_name }}
-          mv ${{ matrix.asset_name }}.tar.gz ../../..
-          mv speedo-${{ matrix.target }}.tar.gz ../../..
+          tar -czf ${{ env.ASSET_NAME }}.tar.gz ${{ env.ARTIFACT_NAME }}
+          tar -czf ${{ github.event.repository.name }}-${{ matrix.target }}.tar.gz ${{ env.ARTIFACT_NAME }}
+          mv ${{ env.ASSET_NAME }}.tar.gz ../../..
+          mv ${{ github.event.repository.name }}-${{ matrix.target }}.tar.gz ../../..
 
       - name: Package binary (Windows)
         if: contains(matrix.target, 'windows')
         shell: pwsh
         run: |
-          Compress-Archive -Path target/${{ matrix.target }}/release/${{ matrix.artifact_name }} -DestinationPath ${{ matrix.asset_name }}.zip
-          Compress-Archive -Path target/${{ matrix.target }}/release/${{ matrix.artifact_name }} -DestinationPath speedo-${{ matrix.target }}.zip
+          Compress-Archive -Path target/${{ matrix.target }}/release/${{ env.ARTIFACT_NAME }} -DestinationPath ${{ env.ASSET_NAME }}.zip
+          Compress-Archive -Path target/${{ matrix.target }}/release/${{ env.ARTIFACT_NAME }} -DestinationPath ${{ github.event.repository.name }}-${{ matrix.target }}.zip
 
       - name: Package binary (macOS)
         if: contains(matrix.target, 'apple')
         run: |
           cd target/${{ matrix.target }}/release
-          tar -czf ${{ matrix.asset_name }}.tar.gz ${{ matrix.artifact_name }}
-          tar -czf speedo-${{ matrix.target }}.tar.gz ${{ matrix.artifact_name }}
-          mv ${{ matrix.asset_name }}.tar.gz ../../..
-          mv speedo-${{ matrix.target }}.tar.gz ../../..
+          tar -czf ${{ env.ASSET_NAME }}.tar.gz ${{ env.ARTIFACT_NAME }}
+          tar -czf ${{ github.event.repository.name }}-${{ matrix.target }}.tar.gz ${{ env.ARTIFACT_NAME }}
+          mv ${{ env.ASSET_NAME }}.tar.gz ../../..
+          mv ${{ github.event.repository.name }}-${{ matrix.target }}.tar.gz ../../..
 
       - name: Upload packaged artifact (Linux/FreeBSD)
         if: contains(matrix.target, 'linux') || contains(matrix.target, 'freebsd')
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.asset_name }}-packaged
+          name: ${{ env.ASSET_NAME }}-packaged
           path: |
-            ${{ matrix.asset_name }}.tar.gz
-            speedo-${{ matrix.target }}.tar.gz
+            ${{ env.ASSET_NAME }}.tar.gz
+            ${{ github.event.repository.name }}-${{ matrix.target }}.tar.gz
 
       - name: Upload packaged artifact (Windows)
         if: contains(matrix.target, 'windows')
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.asset_name }}-packaged
+          name: ${{ env.ASSET_NAME }}-packaged
           path: |
-            ${{ matrix.asset_name }}.zip
-            speedo-${{ matrix.target }}.zip
+            ${{ env.ASSET_NAME }}.zip
+            ${{ github.event.repository.name }}-${{ matrix.target }}.zip
 
       - name: Upload packaged artifact (macOS)
         if: contains(matrix.target, 'apple')
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.asset_name }}-packaged
+          name: ${{ env.ASSET_NAME }}-packaged
           path: |
-            ${{ matrix.asset_name }}.tar.gz
-            speedo-${{ matrix.target }}.tar.gz
+            ${{ env.ASSET_NAME }}.tar.gz
+            ${{ github.event.repository.name }}-${{ matrix.target }}.tar.gz
 
   release:
     name: Create Release
