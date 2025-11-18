@@ -2,7 +2,7 @@
 
 ASCII art title generator with random gradient effects.
 
-This library generates beautiful ASCII art titles with randomly selected fonts and color gradients. Perfect for CLI applications that want a unique, eye-catching splash screen.
+In the sprawl of identical terminals, your mark matters. Every run gets a face, random font-face and color bleeding different each time. They can copy the code, but they can't copy the signature. That's yours.
 
 ## Features
 
@@ -46,6 +46,51 @@ Run the included example:
 
 ```bash
 cargo run --example demo
+```
+
+## Examples
+
+Every run produces a different font and color gradient. Here are some examples:
+
+```
+::::::::::.  :::       :::.     .-:.     ::-.:::::::.  ::: :::      :::     
+ `;;;```.;;; ;;;       ;;`;;     ';;.   ;;;;' ;;;'';;' ;;; ;;;      ;;;     
+  `]]nnn]]'  [[[      ,[[ '[[,     '[[,[[['   [[[__[[\.[[[ [[[      [[[     
+   $$$""     $$'     c$$$cc$$$c      c$$"     $$""""Y$$$$$ $$'      $$'     
+   888o     o88oo,.__ 888   888,   ,8P"`     _88o,,od8P888o88oo,.__o88oo,.__
+   YMMMb    """"YUMMM YMM   ""`   mM"        ""YUMMMP" MMM""""YUMMM""""YUMMM
+```
+
+```
+ ,--.-,,-,--,       ,----.                              _,.---._     
+/==/  /|=|  |    ,-.--` , \    _.-.        _.-.       ,-.' , -  `.   
+|==|_ ||=|, |   |==|-  _.-`  .-,.'|      .-,.'|      /==/_,  ,  - \  
+|==| ,|/=| _|   |==|   `.-. |==|, |     |==|, |     |==|   .=.     | 
+|==|- `-' _ |  /==/_ ,    / |==|- |     |==|- |     |==|_ : ;=:  - | 
+|==|  _     |  |==|    .-'  |==|, |     |==|, |     |==| , '='     | 
+|==|   .-. ,\  |==|_  ,`-._ |==|- `-._  |==|- `-._   \==\ -    ,_ /  
+/==/, //=/  |  /==/ ,     / /==/ - , ,/ /==/ - , ,/   '.='. -   .'   
+`--`-' `-`--`  `--`-----``  `--`-----'  `--`-----'      `--`--''     
+```
+
+```
+ _  (`-')            (`-')  _             <-.(`-')    _                          
+ \-.(OO )    <-.     (OO ).-/       .->    __( OO)   (_)        <-.       <-.    
+ _.'    \  ,--. )    / ,---.    ,--.'  ,-.'-'---.\   ,-(`-')  ,--. )    ,--. )   
+(_...--''  |  (`-')  | \ /`.\  (`-')'.'  /| .-. (/   | ( OO)  |  (`-')  |  (`-') 
+|  |_.' |  |  |OO )  '-'|_.' | (OO \    / | '-' `.)  |  |  )  |  |OO )  |  |OO ) 
+|  .___.' (|  '__ | (|  .-.  |  |  /   /) | /`'.  | (|  |_/  (|  '__ | (|  '__ | 
+|  |       |     |'  |  | |  |  `-/   /`  | '--'  /  |  |'->  |     |'  |     |' 
+`--'       `-----'   `--' `--'    `--'    `------'   `--'     `-----'   `-----'  
+```
+
+```
+       __                           ___   ___         _                               
+  .'|=|  |    .'|        .'|=|`.   |   | |   |   .'|=| `.   .'|   .'|        .'|      
+.'  | |  |  .'  |      .'  | |  `. `.  |_|  .' .'  | | .' .'  | .'  |      .'  |      
+|   |=|.'   |   |      |   |=|   |   `.   .'   |   |=|'.  |   | |   |      |   |      
+|   |       |   |  ___ |   | |   |    |   |    |   | |  | |   | |   |  ___ |   |  ___ 
+|___|       |___|=|_.' |___| |___|    |___|    |___|=|_.' |___| |___|=|_.' |___|=|_.' 
 ```
 
 ## How It Works
