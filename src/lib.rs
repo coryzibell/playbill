@@ -8,19 +8,24 @@ use figlet_rs::FIGfont;
 use colored::*;
 
 pub fn print_title(text: &str, version: Option<&str>) {
+    let title = generate_title(text, version);
+    print!("{}", title);
+}
+
+pub fn generate_title(text: &str, version: Option<&str>) -> String {
     let (_font_name, font_bytes) = fonts::random_font();
     if let Ok(decompressed) = fonts::decompress_font(font_bytes) {
         let font_str = String::from_utf8_lossy(&decompressed);
         match FIGfont::from_content(&font_str) {
             Ok(font) => {
                 if let Some(figure) = font.convert(text) {
-                    print_gradient_text(&figure.to_string());
+                    let mut output = generate_gradient_text(&figure.to_string());
                     if let Some(v) = version {
-                        println!("{} v{}\n", text, v);
+                        output.push_str(&format!("{} v{}\n", text, v));
                     } else {
-                        println!();
+                        output.push('\n');
                     }
-                    return;
+                    return output;
                 }
             }
             Err(_) => {}
@@ -30,17 +35,21 @@ pub fn print_title(text: &str, version: Option<&str>) {
     // Fallback to standard font if something goes wrong
     if let Ok(standard_font) = FIGfont::standard() {
         if let Some(figure) = standard_font.convert(text) {
-            print_gradient_text(&figure.to_string());
+            let mut output = generate_gradient_text(&figure.to_string());
             if let Some(v) = version {
-                println!("{} v{}\n", text, v);
+                output.push_str(&format!("{} v{}\n", text, v));
             } else {
-                println!();
+                output.push('\n');
             }
+            return output;
         }
     }
+    
+    // Ultimate fallback
+    format!("{}\n", text)
 }
 
-fn print_gradient_text(text: &str) {
+fn generate_gradient_text(text: &str) -> String {
     use colorgrad::{Color, GradientBuilder, Gradient};
     use rand::Rng;
     
@@ -70,26 +79,29 @@ fn print_gradient_text(text: &str) {
     
     let lines: Vec<&str> = text.lines().collect();
     if lines.is_empty() {
-        return;
+        return String::new();
     }
     
     // Find the maximum line width
     let max_width = lines.iter().map(|line| line.len()).max().unwrap_or(0);
     
     if max_width == 0 {
-        println!("{}", text);
-        return;
+        return text.to_string();
     }
     
-    // Print each line with gradient applied horizontally
+    let mut output = String::new();
+    
+    // Generate each line with gradient applied horizontally
     for line in lines {
         for (i, ch) in line.chars().enumerate() {
             let t = i as f32 / max_width as f32;
             let color = gradient.at(t);
             let rgba = color.to_rgba8();
-            print!("{}", ch.to_string().truecolor(rgba[0], rgba[1], rgba[2]));
+            output.push_str(&ch.to_string().truecolor(rgba[0], rgba[1], rgba[2]).to_string());
         }
-        println!();
+        output.push('\n');
     }
+    
+    output
 }
 
