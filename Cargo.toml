@@ -1,20 +1,27 @@
 [package]
 name = "playbill"
-version = "0.1.6"
+version = "0.1.7"
 edition = "2021"
 description = "ASCII art title generator with random gradient effects"
 license = "MIT OR Apache-2.0"
 repository = "https://github.com/coryzibell/playbill"
 homepage = "https://github.com/coryzibell/playbill"
 documentation = "https://docs.rs/playbill"
+rust-version = "1.87"
+include = [
+    "src/**/*",
+    "build.rs",
+    "fonts/compressed/**/*",
+    "Cargo.toml",
+    "README.md",
+    "LICENSE-APACHE",
+    "LICENSE-MIT",
+]
 
 [dependencies]
 figlet-rs = "0.1.5"
 colored = "2.1"
 colorgrad = { version = "0.8.0", features = ["preset"] }
 rand = "0.9.2"
-zstd = "0.13"
+ruzstd = "0.8"
 anyhow = "1.0.99"
-
-[build-dependencies]
-zstd = "0.13"
