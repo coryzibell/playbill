@@ -15,12 +15,21 @@ fn main() -> io::Result<()> {
     println!("cargo:rerun-if-changed=fonts");
 
     writeln!(file, "use rand::seq::IteratorRandom;")?;
-    writeln!(file, "pub fn get_embedded_fonts() -> Vec<(&'static str, &'static [u8])> {{")?;
+    writeln!(
+        file,
+        "pub fn get_embedded_fonts() -> Vec<(&'static str, &'static [u8])> {{"
+    )?;
     writeln!(file, "    vec![")?;
 
     let mut font_files: Vec<_> = fs::read_dir(&compressed_dir)?
         .filter_map(|entry| entry.ok())
-        .filter(|entry| entry.path().extension().map(|e| e == "zst").unwrap_or(false))
+        .filter(|entry| {
+            entry
+                .path()
+                .extension()
+                .map(|e| e == "zst")
+                .unwrap_or(false)
+        })
         .collect();
     font_files.sort_by_key(|e| e.file_name());
 
@@ -38,7 +47,10 @@ fn main() -> io::Result<()> {
 
     writeln!(file, "    ]")?;
     writeln!(file, "}}")?;
-    writeln!(file, "\npub fn random_font() -> (&'static str, &'static [u8]) {{")?;
+    writeln!(
+        file,
+        "\npub fn random_font() -> (&'static str, &'static [u8]) {{"
+    )?;
     writeln!(file, "    let fonts = get_embedded_fonts();")?;
     writeln!(file, "    let mut rng = rand::rng();")?;
     writeln!(
