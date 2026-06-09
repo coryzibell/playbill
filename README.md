@@ -88,13 +88,24 @@ Every run produces a different font and color gradient. Here are some examples:
 
 ## How It Works
 
-The library embeds FIGlet font files (.flf) at compile time using a build script. Fonts are compressed with zstd to minimize binary size. At runtime, a random font and gradient are selected to create a unique appearance for each run.
+The library embeds pre-compressed FIGlet font files (.flf) at compile time using a build script. Fonts are stored as committed zstd blobs in `fonts/compressed/` and decoded at runtime using the pure-Rust `ruzstd` decoder — no C toolchain required. A random font and gradient are selected on each run to create a unique appearance.
 
 Every invocation produces a different visual style - same text, different font and color scheme.
 
-## Adding Custom Fonts
+## Adding Custom Fonts / Contributing
 
-Place additional .flf (FIGlet) font files in the `fonts/` directory before building. The build script will automatically include them.
+Drop new `.flf` (FIGlet) font files in `fonts/`, then regenerate the compressed blobs:
+
+```bash
+scripts/compress-fonts.sh
+```
+
+This requires the [`zstd` CLI](https://github.com/facebook/zstd) installed locally — a dev-time
+tool only, not a build or consumer dependency. Commit both the `.flf` and the generated `.zst`
+file from `fonts/compressed/`.
+
+The library builds with zero C dependencies; consumers can cross-compile to targets like
+`aarch64-unknown-linux-musl` without a C cross-toolchain.
 
 ## Dependencies
 
@@ -102,7 +113,7 @@ Place additional .flf (FIGlet) font files in the `fonts/` directory before build
 - `colored` - Terminal color support
 - `colorgrad` - Gradient color generation
 - `rand` - Random selection
-- `zstd` - Font compression
+- `ruzstd` - Pure-Rust zstd decompression (no C toolchain required)
 - `anyhow` - Error handling
 
 ## License
